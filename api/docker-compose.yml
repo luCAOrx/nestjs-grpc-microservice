@@ -1,0 +1,22 @@
+version: '3.7'
+
+services:
+  nestjs-grpc-api:
+    image: node:latest
+    container_name: nestjs-grpc-api
+    restart: always
+    ports:
+      - ${SERVER_PORT}:${SERVER_PORT}
+    env_file:
+      - .env
+    volumes:
+      - .:/usr/app
+    working_dir: /usr/app
+    command: npm run start:dev
+    networks:
+      - nestjs-grpc-microservice-network
+
+networks:
+  nestjs-grpc-microservice-network:
+    name: nestjs-grpc-microservice-network
+    driver: bridge

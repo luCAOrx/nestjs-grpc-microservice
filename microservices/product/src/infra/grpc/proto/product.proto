@@ -1,0 +1,75 @@
+syntax = "proto3";
+
+package product;
+
+message Product {
+  string id = 1;
+  string thumbnail = 2;
+  string name = 3;
+  string ingredients = 4;
+  double price = 5;
+  string volume = 6;
+  bool availability = 7;
+  string others = 8;
+}
+
+message CreateProductRequest {
+  string thumbnail = 1;
+  string name = 2;
+  double price = 3;
+  string ingredients = 4;
+  bool availability = 5;
+  string volume = 6;
+  string others = 7;
+}
+
+message CloneProductRequest {
+  string productId = 1;
+}
+
+message GetProductInformationRequest {
+  string query = 1;
+  string page = 2;
+}
+
+message ListAllProductsRequest {
+  string page = 1;
+}
+
+message UpdateProductRequest {
+  string id = 1;
+  string thumbnail = 2;
+  string name = 3;
+  double price = 4;
+  string ingredients = 5;
+  bool availability = 6;
+  string volume = 7;
+  string others = 8;
+}
+
+message DeleteProductRequest {
+  string id = 1;
+}
+
+message ProductResponse {
+  Product product = 1;
+}
+
+message ProductListResponse {
+  repeated Product products = 1;
+}
+
+message Nothing {}
+
+service ProductService {
+  rpc CreateProduct(CreateProductRequest) returns (ProductResponse);
+  rpc CloneProduct(CloneProductRequest) returns (ProductResponse);
+  rpc GetProductInformation(GetProductInformationRequest) returns (
+    ProductListResponse
+  );
+  rpc ListAllProducts(ListAllProductsRequest) returns (
+    ProductListResponse
+  );
+  rpc UpdateProduct(UpdateProductRequest) returns (ProductResponse);
+  rpc DeleteProduct(DeleteProductRequest) returns (Nothing);
+}

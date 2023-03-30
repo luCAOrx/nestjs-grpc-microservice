@@ -1,0 +1,40 @@
+version: '3.7'
+
+services:
+  nestjs-grpc-product-database:
+    image: mariadb
+    container_name: nestjs-grpc-product-database
+    restart: always
+    ports:
+      - ${DATABASE_PORT}:${DATABASE_PORT}
+    environment:
+      MARIADB_ROOT_USER: ${DATABASE_ROOT_USER}
+      MARIADB_ROOT_PASSWORD: ${DATABASE_ROOT_PASSWORD}
+      MARIADB_ROOT_HOST: ${DATABASE_ROOT_HOST}
+      MARIADB_USER: ${DATABASE_USER}
+      MARIADB_PASSWORD: ${DATABASE_PASSWORD}
+      MARIADB_DATABASE: ${DATABASE_DATABASE}
+    networks:
+      - nestjs-grpc-microservice-network
+
+  nestjs-grpc-product-microservice:
+    image: node:latest
+    container_name: nestjs-grpc-product-microservice
+    restart: always
+    depends_on:
+      - nestjs-grpc-product-database
+    ports:
+      - ${GRPC_PRODUCT_SERVER_PORT}:${GRPC_PRODUCT_SERVER_PORT}
+    env_file:
+      - .env
+    volumes:
+      - .:/usr/app
+    working_dir: /usr/app
+    command: npm run start:dev
+    networks:
+      - nestjs-grpc-microservice-network
+
+networks:
+  nestjs-grpc-microservice-network:
+    name: nestjs-grpc-microservice-network
+    driver: bridge
