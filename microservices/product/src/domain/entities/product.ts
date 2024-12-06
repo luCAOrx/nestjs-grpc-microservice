@@ -1,14 +1,14 @@
 import { Entity } from '@core/domain/entities/entity';
 import { Either, left, right } from '@core/domain/logic/either';
-import { Name } from './Name';
+import { Name } from './name';
 import {
-  NameValidation,
   IngredientsValidation,
   AvailabilityValidation,
   VolumeValidation,
   PriceValidation,
   ThumbnailValidation,
   OthersValidation,
+  NameValidation,
 } from './validations';
 
 interface ProductProps {
@@ -53,8 +53,6 @@ export class Product extends Entity<ProductProps> {
     );
     const otherValidation = new OthersValidation().validate(`${props.others}`);
 
-    const product = new Product(props, id);
-
     // if (!nameValidation) {
     //   return left(new NameValidation());
     // }
@@ -82,6 +80,8 @@ export class Product extends Entity<ProductProps> {
     if (!otherValidation) {
       return left(new OthersValidation());
     }
+
+    const product = new Product(props, id);
 
     return right(product);
   }
