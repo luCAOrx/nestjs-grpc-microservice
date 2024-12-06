@@ -1,7 +1,6 @@
-import { Either, left, right } from '@core/domain/logic/Either';
-import { CreateProductRequestDTO } from '@domain/dtos/ProductDTO';
+import { Either, left, right } from '@core/domain/logic/either';
+import { CreateProductRequestDTO } from '@domain/dtos/productDTO';
 import {
-  NameValidation,
   IngredientsValidation,
   AvailabilityValidation,
   VolumeValidation,
@@ -9,13 +8,15 @@ import {
   ThumbnailValidation,
   OthersValidation,
 } from '@domain/entities/validations';
-import { Product } from '@domain/entities/Product';
+import { Product } from '@domain/entities/product';
 import { ProductRepository } from '@domain/repositories/ProductRepository';
+import { Name } from '@domain/entities/name';
+import { RequiredFieldError } from '@domain/entities/validations/errors/requiredFieldError';
 
 export type CreateProductRequest = CreateProductRequestDTO;
 
 export type CreateProductResponse = Either<
-  | NameValidation
+  | RequiredFieldError
   | IngredientsValidation
   | AvailabilityValidation
   | VolumeValidation
@@ -37,10 +38,16 @@ export class CreateProductUseCase {
     volume,
     others,
   }: CreateProductRequest): Promise<CreateProductResponse> {
+    const nameOrError = Name.create(name);
+
+    if (nameOrError.isLeft()) {
+      return left(nameOrError.value);
+    }
+
     const productOrError = Product.create({
       availability,
       ingredients,
-      name,
+      name: nameOrError.value,
       price,
       thumbnail,
       volume,
